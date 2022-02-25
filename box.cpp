@@ -1,21 +1,6 @@
 #include "box.h"
+#include "converter.h"
 #include <SFML/Graphics.hpp>
-#include <cmath>
-
-constexpr double pixelsToMeters{ 0.1 };
-constexpr double metersToPixels{ 10 };
-constexpr double radiansToDegrees{ 180 / M_PI };
-
-
-sf::Vector2f Vec2ToVector2f(b2Vec2 vec2)
-{
-  return sf::Vector2f(vec2.x, vec2.y);
-}
-
-b2Vec2 Vector2fToVec2(sf::Vector2f vector2f)
-{
-  return b2Vec2(vector2f.x, vector2f.y);
-}
 
 Box::Box(sf::Vector2f position, b2World& world)
   : position{ position },
@@ -34,11 +19,13 @@ Box::Box(sf::Vector2f position, b2World& world)
   b2BodyDef bodyDef{  };
   bodyDef.type = b2_dynamicBody;
   //bodyDef.position.Set(1.0, 1.0);
-  bodyDef.position.Set(position.x * pixelsToMeters, position.y * pixelsToMeters);
+  bodyDef.position.Set(position.x * Convert::pixelsToMeters, 
+                       position.y * Convert::pixelsToMeters);
   body = world.CreateBody(&bodyDef);
 
   //Box2D shape setup
-  shape.SetAsBox(0.8, 0.8);
+  shape.SetAsBox(box.getSize().x * Convert::pixelsToMeters * 0.5, 
+                 box.getSize().y * Convert::pixelsToMeters * 0.5);
   
   //Box2D fixture setup
   fixtureDef.shape = &shape;
@@ -61,10 +48,10 @@ Box::Box(const Box& box)
 
 void Box::update()
 {
-  position = sf::Vector2f(body->GetPosition().x * metersToPixels,
-                          body->GetPosition().y * metersToPixels);
+  position = sf::Vector2f(body->GetPosition().x * Convert::metersToPixels,
+                          body->GetPosition().y * Convert::metersToPixels);
   box.setPosition(position);
-  box.setRotation(body->GetAngle() * radiansToDegrees);
+  box.setRotation(body->GetAngle() * Convert::radiansToDegrees);
 }
 
 void Box::draw(sf::RenderWindow& targetWindow)

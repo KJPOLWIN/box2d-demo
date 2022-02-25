@@ -1,4 +1,5 @@
 #include "box.h"
+#include "platform.h"
 #include <SFML/Graphics.hpp>
 #include <box2d.h>
 #include <vector>
@@ -12,6 +13,13 @@ int main()
   b2World world{ gravity };
 
   std::vector<Box> boxes{  };
+  Platform platform1{ sf::Vector2f(200, 500),
+                      sf::Vector2f(300, 30),
+                      world };
+  Platform platform2{ sf::Vector2f(500, 400),
+                      sf::Vector2f(300, 30),
+                      world };
+
 
   sf::Event event;
   while(window.isOpen())
@@ -41,11 +49,16 @@ int main()
       }
     }
 
+
     window.clear(sf::Color::White);
+    
     for(auto& box : boxes)
     {
       box.draw(window);
     }
+    platform1.draw(window);
+    platform2.draw(window);
+
     window.display();
   }
 
